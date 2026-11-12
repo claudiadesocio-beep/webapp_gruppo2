@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FloraMappa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <header class="sidebar-header">
+          <div class="brand-wrap">
+            <div class="brand-mark">F</div>
+            <div>
+              <p class="eyebrow">GIS ambientale</p>
+              <h1>FloraMappa</h1>
+            </div>
+          </div>
+          <span class="chip status-chip">VIncA • VIA</span>
+        </header>
+
+        <section class="step-card">
+          <div class="step-header">
+            <span class="step-badge">1</span>
+            <h2>Selezione Area</h2>
+          </div>
+          <button id="simulateAreaBtn" class="primary-button" type="button">
+            Simula caricamento poligono progetto (Impianto FV - Appennino Centrale)
+          </button>
+          <p class="helper-text">oppure clicca direttamente sulla mappa per creare un buffer di 1 km.</p>
+          <div id="selectionSummary" class="summary-box">
+            Nessuna area di indagine selezionata.
+          </div>
+          <div id="mapHint" class="map-hint">Scegli un'area o usa la simulazione di progetto.</div>
+          <button id="resetAreaBtn" class="secondary-button" type="button">Reset area</button>
+          <div id="overviewStats" class="overview-stats" aria-live="polite"></div>
+
+          <div class="priority-panel">
+            <div class="priority-header">
+              <h3>Priorità di verifica</h3>
+              <span id="riskBadge" class="risk-badge neutral">Media</span>
+            </div>
+            <div id="prioritySummary" class="priority-summary"></div>
+          </div>
+        </section>
+
+        <section class="step-card">
+          <div class="step-header">
+            <span class="step-badge">2</span>
+            <h2>Analisi e Verifica</h2>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-toggle">
+              <input type="checkbox" id="protectedFilter" />
+              <span>Solo specie protette / Direttiva Habitat</span>
+            </label>
+            <label class="filter-toggle">
+              <input type="checkbox" id="recentFilter" />
+              <span>Solo dati recenti e puntuali</span>
+            </label>
+          </div>
+
+          <div id="speciesList" class="species-list" aria-live="polite"></div>
+        </section>
+
+        <section class="step-card detail-card">
+          <div class="step-header compact">
+            <span class="step-badge">3</span>
+            <h2>Scheda specie</h2>
+          </div>
+          <div id="speciesDetail" class="species-detail">
+            <p class="empty-state">Seleziona una specie per visualizzare il dettaglio.</p>
+          </div>
+        </section>
+
+        <button id="exportBtn" class="export-button" type="button">
+          Esporta Checklist di Campo (.CSV)
+        </button>
+      </aside>
+
+      <main class="map-panel">
+        <div class="map-topbar">
+          <div>
+            <p class="eyebrow">Area rilevata</p>
+            <h2 id="areaName">Impianto FV - Appennino Centrale</h2>
+          </div>
+          <div class="legend">
+            <span><i class="legend-dot dot-high"></i>Affidabile</span>
+            <span><i class="legend-dot dot-medium"></i>Da verificare</span>
+            <span><i class="legend-dot dot-low"></i>Storico/impreciso</span>
+          </div>
+        </div>
+        <div id="map" aria-label="Mappa delle specie floristiche e habitat"></div>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="app.js"></script>
+  </body>
+</html>
