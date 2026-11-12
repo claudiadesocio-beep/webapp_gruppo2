@@ -1,52 +1,106 @@
 <!doctype html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Il topo ladro</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <main class="shell">
-    <header class="topbar">
-      <div class="brand"><span class="brand-mark">🐭</span><span>Il topo ladro</span></div>
-      <span class="difficulty">Difficoltà <b>★★☆☆☆</b></span>
-    </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FloraMappa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <header class="sidebar-header">
+          <div class="brand-wrap">
+            <div class="brand-mark">F</div>
+            <div>
+              <p class="eyebrow">GIS ambientale</p>
+              <h1>FloraMappa</h1>
+            </div>
+          </div>
+          <span class="chip status-chip">VIncA • VIA</span>
+        </header>
 
-    <section class="hero">
-      <div>
-        <p class="eyebrow">Operazione formaggio</p>
-        <h1>Silenzio.<br><em>Si ruba.</em></h1>
-      </div>
-      <p class="hero-copy">Prendi i tre snack, evita il gatto e torna nella tana. Se ti vede, corri al mobiletto più vicino!</p>
-    </section>
+        <section class="step-card">
+          <div class="step-header">
+            <span class="step-badge">1</span>
+            <h2>Selezione Area</h2>
+          </div>
+          <button id="simulateAreaBtn" class="primary-button" type="button">
+            Simula caricamento poligono progetto (Impianto FV - Appennino Centrale)
+          </button>
+          <p class="helper-text">oppure clicca direttamente sulla mappa per creare un buffer di 1 km.</p>
+          <div id="selectionSummary" class="summary-box">
+            Nessuna area di indagine selezionata.
+          </div>
+          <div id="mapHint" class="map-hint">Scegli un'area o usa la simulazione di progetto.</div>
+          <button id="resetAreaBtn" class="secondary-button" type="button">Reset area</button>
+          <div id="overviewStats" class="overview-stats" aria-live="polite"></div>
 
-    <section class="hud" aria-label="Stato della partita">
-      <div><span>Bottino</span><strong id="loot">0 / 3</strong></div>
-      <div><span>Stato gatto</span><strong id="cat-status">Pisolino</strong></div>
-      <div><span>Obiettivo</span><strong id="objective">Ruba tutto</strong></div>
-    </section>
+          <div class="priority-panel">
+            <div class="priority-header">
+              <h3>Priorità di verifica</h3>
+              <span id="riskBadge" class="risk-badge neutral">Media</span>
+            </div>
+            <div id="prioritySummary" class="priority-summary"></div>
+          </div>
+        </section>
 
-    <section class="game-card">
-      <div class="game-head"><span id="message">Pronto per il colpo?</span><button id="restart" type="button">↻ Ricomincia</button></div>
-      <div class="canvas-wrap">
-        <canvas id="game" width="800" height="520" tabindex="0" aria-label="Gioco top-down Il topo ladro"></canvas>
-        <div id="overlay" class="overlay">
-          <div class="overlay-icon">🐭</div>
-          <h2 id="overlay-title">Il colpo perfetto</h2>
-          <p id="overlay-copy">Raccogli formaggio, biscotto e mela. Poi torna alla tana.</p>
-          <button id="start" class="primary" type="button">Inizia il furto <span>→</span></button>
+        <section class="step-card">
+          <div class="step-header">
+            <span class="step-badge">2</span>
+            <h2>Analisi e Verifica</h2>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-toggle">
+              <input type="checkbox" id="protectedFilter" />
+              <span>Solo specie protette / Direttiva Habitat</span>
+            </label>
+            <label class="filter-toggle">
+              <input type="checkbox" id="recentFilter" />
+              <span>Solo dati recenti e puntuali</span>
+            </label>
+          </div>
+
+          <div id="speciesList" class="species-list" aria-live="polite"></div>
+        </section>
+
+        <section class="step-card detail-card">
+          <div class="step-header compact">
+            <span class="step-badge">3</span>
+            <h2>Scheda specie</h2>
+          </div>
+          <div id="speciesDetail" class="species-detail">
+            <p class="empty-state">Seleziona una specie per visualizzare il dettaglio.</p>
+          </div>
+        </section>
+
+        <button id="exportBtn" class="export-button" type="button">
+          Esporta Checklist di Campo (.CSV)
+        </button>
+      </aside>
+
+      <main class="map-panel">
+        <div class="map-topbar">
+          <div>
+            <p class="eyebrow">Area rilevata</p>
+            <h2 id="areaName">Impianto FV - Appennino Centrale</h2>
+          </div>
+          <div class="legend">
+            <span><i class="legend-dot dot-high"></i>Affidabile</span>
+            <span><i class="legend-dot dot-medium"></i>Da verificare</span>
+            <span><i class="legend-dot dot-low"></i>Storico/impreciso</span>
+          </div>
         </div>
-      </div>
-      <div class="controls">
-        <div class="keys"><span>Muovi</span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>o frecce</span></div>
-        <div class="keys"><kbd>E</kbd><span>raccogli / nasconditi</span></div>
-        <div class="touch" aria-label="Controlli touch"><button data-key="ArrowLeft" type="button">←</button><button data-key="ArrowUp" type="button">↑</button><button data-key="ArrowDown" type="button">↓</button><button data-key="ArrowRight" type="button">→</button><button data-key="e" type="button">E</button></div>
-      </div>
-    </section>
+        <div id="map" aria-label="Mappa delle specie floristiche e habitat"></div>
+      </main>
+    </div>
 
-    <footer><span>Una casa. Tre snack. Un gatto troppo curioso.</span><span>ecommerce-ai-lab / MVP 001</span></footer>
-  </main>
-  <script src="app.js"></script>
-</body>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="app.js"></script>
+  </body>
 </html>
